@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template.html"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>New Cinema</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script defer="defer">
+        function loadCinemas() {
+            var city_id = $("#cities").val();
+            var url = "http://127.0.0.1:8383/villes/" + city_id + "/cinemas";
+            $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: 'json',
+                success: function (data) {
+                    $("#cinemas").empty();
+                    var cinemas = data._embedded.cinemas;
+                    cinemas.forEach(function (cinema, i) {
+                        var option = "<option value = " + cinema.id + ">" + cinema.name + "</option>";
+                        $("#cinemas").append(option);
+                    });
+                }
+            });
+
+        }
+
+    </script>
+</head>
+<body th:onload="loadCinemas()">
+<div layout:fragment="pageContent">
+    <div class="row col-12 justify-content-between mb-2 ">
+        <div class="pageTitle">
+            <img src="./images/watch-movie.png" alt="" class="titleLogo mb-2 mr-3">
+            Rooms
+        </div>
+        <div onclick='javascript:window.history.back()' class="my-auto btn btn-outline-info">
+
+            <i class="fas fa-undo"></i>
+            Go back
+        </div>
+
+    </div>
+
+    <hr class="mt-2 mb-5">
+    <!--Content-->
+    <div class="container ">
+        <div class="card shadow-lg ">
+
+            <div class="card-header text-center text-uppercase text-white bg-dark font-weight-bold">
+                Add New Cinema
+            </div>
+            <div class="card-body px-5 pt-5">
+
+                <form method="post" th:action="@{saveRoom}" th:object="${room}">
+                    <div class="alert alert-danger" role="alert" th:errors="${room.name}">
+                    </div>
+                    <div class="row col-md-12 justify-content-between px-0 mx-0">
+                        <label class="col-md-2 my-auto px-0 mx-0">Name</label>
+                        <div class="row col-md-10 justify-content-between px-0 mx-0">
+                            <input type="text" class="form-control " th:field="*{name}">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row col-md-12 justify-content-between px-0 mx-0">
+                        <label class="col-md-2 my-auto px-0 mx-0">City</label>
+                        <div class="row col-md-10 justify-content-between px-0 mx-0">
+                            <select class="form-control" onchange="loadCinemas()" id="cities">
+                                <option th:each="c : ${cities}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}"
+                               >
+                                </option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row col-md-12 justify-content-between px-0 mx-0">
+                        <label class="col-md-2 my-auto px-0 mx-0">Cinema</label>
+                        <div class="row col-md-10 justify-content-between px-0 mx-0">
+                            <select th:field="*{cinema}" class="form-control" id="cinemas">
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="alert alert-danger" role="alert" th:errors="${room.nombrePlace}">
+                    </div>
+                    <div class="row col-md-12 justify-content-between px-0 mx-0">
+                        <label class="col-md-2 my-auto px-0 mx-0">Seats Number</label>
+                        <div class="row col-md-10 justify-content-between px-0 mx-0">
+                            <input type="number" class="form-control " th:field="*{nombrePlace}">
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row col-md-12 justify-content-between mt-5">
+                        <label class="col-md-2 my-auto px-0 mx-0"></label>
+                        <div class="row col-md-10 justify-content-around px-0 mx-0">
+                            <button class="btn btn-success btn-block col-md-5 my-auto " type="submit">
+                                Submit
+                            </button>
+                            <div class="btn btn-outline-dark btn-block col-md-5 my-auto ">
+                                Cancel
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+
+</html>
